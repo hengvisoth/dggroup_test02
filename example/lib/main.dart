@@ -30,7 +30,7 @@ class _HomeState extends State<Home> {
     if (res.ipv6.isNotEmpty) ipLines.add('ipv6: ${res.ipv6}');
 
     setState(() {
-      text = 'message: ${res.message}\nconnection: ${res.connection}';
+      text = ' ${res.message}';
       if (ipLines.isNotEmpty) {
         text = '$text\n${ipLines.join('\n')}';
       }

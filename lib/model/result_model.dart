@@ -9,6 +9,7 @@ class IpResult {
 
   factory IpResult.fromMap(Map<dynamic, dynamic> map) {
     final ok = (map['ok'] as bool?) ?? false;
+    print("Map Result: $map");
     return IpResult(
       ipv4: (map['ipv4'] as String?) ?? '',
       ipv6: (map['ipv6'] as String?) ?? '',

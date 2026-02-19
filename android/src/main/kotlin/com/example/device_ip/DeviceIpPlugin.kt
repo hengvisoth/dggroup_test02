@@ -122,6 +122,7 @@ class DeviceIpPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
   private fun extractIps(linkAddresses: List<LinkAddress>): Pair<String, String> {
     var ipv4 = ""
     var ipv6 = ""
+    var linkLocalIpv6 = ""
 
     for (la in linkAddresses) {
       val addr = la.address ?: continue
@@ -131,17 +132,26 @@ class DeviceIpPlugin : FlutterPlugin, MethodChannel.MethodCallHandler {
         is Inet4Address -> if (ipv4.isEmpty() && !addr.isAnyLocalAddress) {
           ipv4 = addr.hostAddress ?: ""
         }
-        is Inet6Address -> if (ipv6.isEmpty() &&
-          !addr.isLinkLocalAddress &&
-          !addr.isMulticastAddress &&
-          !addr.isAnyLocalAddress
-        ) {
+        is Inet6Address -> {
+          if (addr.isMulticastAddress || addr.isAnyLocalAddress) continue
+
           val raw = addr.hostAddress ?: ""
-          ipv6 = raw.substringBefore('%') // remove scope id
+          val normalized = raw.substringBefore('%') // remove scope id
+          if (normalized.isEmpty()) continue
+
+          if (!addr.isLinkLocalAddress && ipv6.isEmpty()) {
+            ipv6 = normalized
+          } else if (addr.isLinkLocalAddress && linkLocalIpv6.isEmpty()) {
+            linkLocalIpv6 = normalized
+          }
         }
       }
 
       if (ipv4.isNotEmpty() && ipv6.isNotEmpty()) break
+    }
+
+    if (ipv6.isEmpty()) {
+      ipv6 = linkLocalIpv6
     }
 
     return Pair(ipv4, ipv6)

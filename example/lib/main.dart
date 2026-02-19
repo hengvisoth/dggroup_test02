@@ -1,3 +1,4 @@
+import 'package:device_ip/model/result_model.dart';
 import 'package:flutter/material.dart';
 import 'package:device_ip/device_ip.dart';
 
@@ -8,7 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Home());
+    return const MaterialApp(debugShowCheckedModeBanner: false, home: Home());
   }
 }
 
@@ -20,16 +21,19 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   String text = 'Press a button';
+  IpResult? result;
 
   Future<void> run(NetworkType type) async {
     final res = await DeviceIp.getIp(type: type);
+    final ipLines = <String>[];
+    if (res.ipv4.isNotEmpty) ipLines.add('ipv4: ${res.ipv4}');
+    if (res.ipv6.isNotEmpty) ipLines.add('ipv6: ${res.ipv6}');
+
     setState(() {
-      text =
-          'ok: ${res.ok}\n'
-          'message: ${res.message}\n'
-          'connection: ${res.connection}\n'
-          'ipv4: ${res.ipv4}\n'
-          'ipv6: ${res.ipv6}';
+      text = 'message: ${res.message}\nconnection: ${res.connection}';
+      if (ipLines.isNotEmpty) {
+        text = '$text\n${ipLines.join('\n')}';
+      }
     });
   }
 
@@ -44,7 +48,6 @@ class _HomeState extends State<Home> {
             Wrap(
               spacing: 12,
               children: [
-                ElevatedButton(onPressed: () => run(NetworkType.any), child: const Text("Any")),
                 ElevatedButton(onPressed: () => run(NetworkType.wifi), child: const Text("Wi-Fi")),
                 ElevatedButton(onPressed: () => run(NetworkType.mobile), child: const Text("Mobile")),
               ],

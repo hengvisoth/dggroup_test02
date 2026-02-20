@@ -1,3 +1,17 @@
+## Screenshots
+
+Wi-Fi output:
+
+![Wi-Fi output](doc/images/wifi_output.png)
+
+Connected state:
+
+![Internet connected](doc/images/internet.png)
+
+No internet state:
+
+![No internet](doc/images/no_internet.png)
+
 # device_ip
 
 Flutter plugin to get local device IP addresses (IPv4/IPv6) from Wi-Fi or mobile network.

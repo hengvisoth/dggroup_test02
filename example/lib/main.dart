@@ -30,9 +30,11 @@ class _HomeState extends State<Home> {
     if (res.ipv6.isNotEmpty) ipLines.add('ipv6: ${res.ipv6}');
 
     setState(() {
-      text = ' ${res.message}';
+      text = '';
       if (ipLines.isNotEmpty) {
         text = '$text\n${ipLines.join('\n')}';
+      } else {
+        text = 'No internet or wifi connection';
       }
     });
   }
